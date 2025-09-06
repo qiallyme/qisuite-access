@@ -4,6 +4,7 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useProfile } from "../../hooks/useProfile";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -15,11 +16,24 @@ export default function UserMetaCard() {
     const location = (document.getElementById("profile_location") as HTMLInputElement | null)?.value || "";
     const phone = (document.getElementById("profile_phone") as HTMLInputElement | null)?.value || "";
     const bio = (document.getElementById("profile_bio") as HTMLInputElement | null)?.value || "";
-    const avatarUrl = (document.getElementById("profile_avatar_url") as HTMLInputElement | null)?.value || "";
+    const avatarUrlInput = (document.getElementById("profile_avatar_url") as HTMLInputElement | null)?.value || "";
+    const avatarFileInput = document.getElementById("profile_avatar_file") as HTMLInputElement | null;
+    let avatar_url = avatarUrlInput;
+
+    // Optional upload to Supabase Storage (bucket: avatars)
+    if (avatarFileInput?.files && avatarFileInput.files[0] && profile?.id) {
+      const file = avatarFileInput.files[0];
+      const path = `${profile.id}/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (!upErr) {
+        const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+        if (data?.publicUrl) avatar_url = data.publicUrl;
+      }
+    }
 
     await save({
       full_name: fullName,
-      avatar_url: avatarUrl,
+      avatar_url,
       metadata: { title, location, phone, bio },
     });
     closeModal();
@@ -191,6 +205,10 @@ export default function UserMetaCard() {
                 <div className="col-span-2">
                   <Label>Avatar URL</Label>
                   <Input id="profile_avatar_url" type="text" defaultValue={profile?.avatar_url || ""} />
+                </div>
+                <div className="col-span-2">
+                  <Label>Upload Avatar</Label>
+                  <input id="profile_avatar_file" type="file" accept="image/*" className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs text-gray-800 border-gray-300 dark:border-gray-700 dark:text-white/90" />
                 </div>
               </div>
             </div>
