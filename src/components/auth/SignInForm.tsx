@@ -38,6 +38,33 @@ export default function SignInForm() {
                 e.preventDefault();
                 setError(null);
                 setLoading(true);
+                // Pre-check: only allow emails that already exist in an allowed table
+                async function isAllowed(emailToCheck: string) {
+                  const tables = ["profiles", "users", "clients"] as const;
+                  for (const t of tables) {
+                    try {
+                      const { error: selErr, count } = await supabase
+                        .from(t as string)
+                        .select("id", { count: "exact", head: true })
+                        .eq("email", emailToCheck);
+                      if (!selErr && (count ?? 0) > 0) return true;
+                    } catch {
+                      // ignore and try next table
+                    }
+                  }
+                  return false;
+                }
+
+                const allowed = await isAllowed(email);
+                if (!allowed) {
+                  setLoading(false);
+                  setOtpSent(null);
+                  setError(
+                    "You must be invited first. Please contact support if you believe this is a mistake.",
+                  );
+                  return;
+                }
+
                 const { error } = await supabase.auth.signInWithOtp({
                   email,
                   options: {
