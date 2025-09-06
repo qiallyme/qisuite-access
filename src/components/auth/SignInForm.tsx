@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { ChevronLeftIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
@@ -11,8 +11,6 @@ export default function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
   return (
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
