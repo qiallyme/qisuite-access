@@ -9,8 +9,12 @@ import { supabase } from "../../lib/supabaseClient";
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { profile, save } = useProfile();
+  const [saving, setSaving] = useState(false as boolean);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSave = async () => {
+    setSaveError(null);
+    setSaving(true);
     const fullName = (document.getElementById("profile_full_name") as HTMLInputElement | null)?.value || "";
     const title = (document.getElementById("profile_title") as HTMLInputElement | null)?.value || "";
     const location = (document.getElementById("profile_location") as HTMLInputElement | null)?.value || "";
@@ -31,11 +35,16 @@ export default function UserMetaCard() {
       }
     }
 
-    await save({
+    const { error } = await save({
       full_name: fullName,
       avatar_url,
       metadata: { title, location, phone, bio },
     });
+    setSaving(false);
+    if (error) {
+      setSaveError(error.message || "Failed to save profile");
+      return;
+    }
     closeModal();
   };
   return (
@@ -212,12 +221,15 @@ export default function UserMetaCard() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button type="button" size="sm" variant="outline" onClick={closeModal}>
+            {saveError && (
+              <div className="px-2 text-sm text-red-600 dark:text-red-400">{saveError}</div>
+            )}
+            <div className="flex items-center gap-3 px-2 mt-4 lg:justify-end">
+              <Button type="button" size="sm" variant="outline" onClick={closeModal} disabled={saving}>
                 Close
               </Button>
-              <Button type="button" size="sm" onClick={handleSave}>
-                Save Changes
+              <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

@@ -8,11 +8,20 @@ import { useProfile } from "../../hooks/useProfile";
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
   const { profile, save } = useProfile();
+  const [saving, setSaving] = useState(false as boolean);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const handleSave = async () => {
+    setSaveError(null);
+    setSaving(true);
     const fullName = (document.getElementById("info_full_name") as HTMLInputElement | null)?.value || "";
     const phone = (document.getElementById("info_phone") as HTMLInputElement | null)?.value || "";
     const bio = (document.getElementById("info_bio") as HTMLInputElement | null)?.value || "";
-    await save({ full_name: fullName, metadata: { ...(profile?.metadata ?? {}), phone, bio } });
+    const { error } = await save({ full_name: fullName, metadata: { ...(profile?.metadata ?? {}), phone, bio } });
+    setSaving(false);
+    if (error) {
+      setSaveError(error.message || "Failed to save profile");
+      return;
+    }
     closeModal();
   };
   return (
@@ -160,12 +169,15 @@ export default function UserInfoCard() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button type="button" size="sm" variant="outline" onClick={closeModal}>
+            {saveError && (
+              <div className="px-2 text-sm text-red-600 dark:text-red-400">{saveError}</div>
+            )}
+            <div className="flex items-center gap-3 px-2 mt-4 lg:justify-end">
+              <Button type="button" size="sm" variant="outline" onClick={closeModal} disabled={saving}>
                 Close
               </Button>
-              <Button type="button" size="sm" onClick={handleSave}>
-                Save Changes
+              <Button type="button" size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
