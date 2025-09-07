@@ -2,6 +2,120 @@
 QiSuite Access Client Portal for QiAlly Partner Clients.
 
 ---
+
+## Cloudflare Pages Deployment
+
+- Project type: Static Vite SPA (Cloudflare Pages)
+- Project name: `qisuite-access`
+- Production branch: `main`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: `/`
+- Node.js version: 20+ (default in Pages is fine)
+
+### Environment Variables (Production and Preview)
+- `VITE_SUPABASE_URL`: your Supabase URL
+- `VITE_SUPABASE_ANON_KEY`: your Supabase anon key
+- `VITE_SITE_URL`: your public URL (e.g., `https://qisuite-access.pages.dev` or custom domain)
+
+Notes:
+- Pages uses `npm ci`; keep `package-lock.json` in sync with `package.json` (done).
+- Client-side env changes require a rebuild to take effect.
+
+### Supabase Auth URLs
+- Authentication → URL Configuration:
+  - Site URL: match `VITE_SITE_URL`
+  - Additional Redirect URLs: `http://localhost:5173`, `http://localhost:5174`
+
+### Custom Domain (optional)
+- Pages → Custom domains → Connect `portal.yourdomain.com` (or similar)
+- Update:
+  - `VITE_SITE_URL` → custom domain
+  - Supabase Site URL and Additional Redirect URLs → include custom domain
+
+---
+
+## Local Development
+
+```bash
+# Install
+npm install
+
+# Start
+npm run dev  # http://localhost:5173
+
+# Build
+npm run build  # outputs to dist/
+```
+
+Env file for local:
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+VITE_SITE_URL=http://localhost:5173
+```
+
+---
+
+## Delivery Plan (Methodical Path)
+
+For each page/feature we iterate in this order: page check → page update → page text → page lock → next.
+
+Legend:
+- Page check: confirm route exists and design fits system (tailwind/ui consistency)
+- Page update: build/adjust UI and wire data
+- Page text: finalize copy (headings, labels, empty states)
+- Page lock: auth/RBAC, route guards, and QA
+
+Planned sequence:
+1) Auth flow
+   - Page check: `/signin` (email magic-link)
+   - Page update: ensure magic-link + error states; optional code-based OTP next
+   - Page text: finalize copy, legal links
+   - Page lock: redirect logged-in users away, public access only
+
+2) Dashboard Home
+   - Page check: `/` (protected)
+   - Page update: show welcome, quick stats; wire any sample KPIs
+   - Page text
+   - Page lock: require session
+
+3) Client Update
+   - Page check: `/client-update`
+   - Page update: write to `client_updates` table (Supabase)
+   - Page text: helper text, success/error messages
+   - Page lock: require session
+
+4) Profile & Settings
+   - Page check: `/profile`, `/settings` (if split)
+   - Page update: profile fields, passwordless session management, theme toggle
+   - Page text
+   - Page lock: session + per-user access
+
+5) Organization (optional, phase 2)
+   - Page check: org list/members/invites
+   - Page update: CRUD + roles (owner/admin/member)
+   - Page text
+   - Page lock: role-based access (RBAC)
+
+6) Billing (optional, phase 2)
+   - Page check: subscription plan and invoices
+   - Page update: integrate provider (Stripe), display usage
+   - Page text
+   - Page lock: owner/admin
+
+7) Reports/Analytics (optional, phase 2)
+   - Page check: reports routes
+   - Page update: charts/tables
+   - Page text
+   - Page lock: roles as needed
+
+8) Polishing & Ops
+   - 404/500 pages, empty states, loading skeletons
+   - Accessibility, performance (bundle/code-split where needed)
+   - CI/CD (Pages), custom domain, cache headers
+
+We will track these as tasks and move page-by-page, ensuring each is checked, updated, copy-reviewed, and locked before proceeding.
 # TailAdmin React - Free React Tailwind Admin Dashboard Template
 
 TailAdmin is a free and open-source admin dashboard template built on **React and Tailwind CSS**, providing developers
