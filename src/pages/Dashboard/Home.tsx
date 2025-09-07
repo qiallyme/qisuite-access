@@ -1,12 +1,12 @@
-import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
-import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "../../components/ecommerce/StatisticsChart";
-import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
-import RecentOrders from "../../components/ecommerce/RecentOrders";
-import DemographicCard from "../../components/ecommerce/DemographicCard";
+import { lazy, Suspense, useEffect, useState } from "react";
+const EcommerceMetrics = lazy(() => import("../../components/ecommerce/EcommerceMetrics"));
+const MonthlySalesChart = lazy(() => import("../../components/ecommerce/MonthlySalesChart"));
+const StatisticsChart = lazy(() => import("../../components/ecommerce/StatisticsChart"));
+const MonthlyTarget = lazy(() => import("../../components/ecommerce/MonthlyTarget"));
+const RecentOrders = lazy(() => import("../../components/ecommerce/RecentOrders"));
+const DemographicCard = lazy(() => import("../../components/ecommerce/DemographicCard"));
 import PageMeta from "../../components/common/PageMeta";
 import Button from "../../components/ui/button/Button";
-import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Home() {
@@ -72,25 +72,36 @@ export default function Home() {
         </div>
 
         <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
-
-          <MonthlySalesChart />
+          <Suspense fallback={<div className="h-40 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <EcommerceMetrics />
+          </Suspense>
+          <Suspense fallback={<div className="h-72 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <MonthlySalesChart />
+          </Suspense>
         </div>
 
         <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
+          <Suspense fallback={<div className="h-80 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <MonthlyTarget />
+          </Suspense>
         </div>
 
         <div className="col-span-12">
-          <StatisticsChart />
+          <Suspense fallback={<div className="h-96 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <StatisticsChart />
+          </Suspense>
         </div>
 
         <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
+          <Suspense fallback={<div className="h-64 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <DemographicCard />
+          </Suspense>
         </div>
 
         <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
+          <Suspense fallback={<div className="h-64 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" /> }>
+            <RecentOrders />
+          </Suspense>
         </div>
 
         {enableClientUpdates && (
