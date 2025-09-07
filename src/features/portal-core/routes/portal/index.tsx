@@ -1,20 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+// Note: This file is prepared for TanStack Router integration
+// Currently using React Router in the Portal Core repo
 import { getPortalCoreConfig } from "../../lib/env";
 import { useSupabaseSession } from "../../components/auth/SupabaseAuthProvider";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
-export const Route = createFileRoute("/portal/")({
-  beforeLoad: () => {
-    // Check if Portal Core is enabled
-    if (!getPortalCoreConfig().enabled) {
-      throw new Response("Not Found", { status: 404 });
-    }
-  },
-  component: PortalDashboard,
-});
-
-function PortalDashboard() {
+// This component will be integrated with TanStack Router in the Template repo
+export function PortalDashboard() {
   const { user, loading } = useSupabaseSession();
   const [email, setEmail] = useState<string>("");
   const [updates, setUpdates] = useState<Array<{ id: string; company: string; notes: string; created_at: string }>>([]);

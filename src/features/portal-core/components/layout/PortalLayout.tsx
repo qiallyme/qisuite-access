@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet } from "@tanstack/react-router";
+import { Outlet } from "react-router";
 import { SupabaseAuthProvider } from "../auth/SupabaseAuthProvider";
 import RequireAuth from "../auth/RequireAuth";
 import { getPortalCoreConfig } from "../../lib/env";
@@ -33,7 +33,6 @@ export function PortalLayout({ children }: PortalLayoutProps) {
           
           <div className="flex-1 flex flex-col overflow-hidden">
             <PortalHeader
-              isSidebarOpen={sidebarOpen}
               onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
             />
             
@@ -89,10 +88,8 @@ function PortalSidebar({ isOpen }: { isOpen: boolean }) {
 }
 
 function PortalHeader({ 
-  isSidebarOpen, 
   onMenuToggle 
 }: { 
-  isSidebarOpen: boolean; 
   onMenuToggle: () => void; 
 }) {
   return (
@@ -101,6 +98,8 @@ function PortalHeader({
         <button
           onClick={onMenuToggle}
           className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+          aria-label="Toggle sidebar menu"
+          title="Toggle sidebar menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
