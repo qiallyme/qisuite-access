@@ -1,0 +1,8 @@
+---
+const agentId = import.meta.env.PUBLIC_ELEVENLABS_AGENT_ID;
+if (!agentId) { /* don't render if not configured */ }
+---
+{ agentId && <elevenlabs-convai agent-id={agentId}></elevenlabs-convai> }
+
+
+
