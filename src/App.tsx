@@ -20,6 +20,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ClientUpdate from "./pages/Dashboard/ClientUpdate";
 import RequireAuth from "./components/auth/RequireAuth";
+import Support from "./pages/Support";
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
             <Route path="/client-update" element={<ClientUpdate />} />
+            <Route path="/support" element={<Support />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
