@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function Support() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const existing = document.getElementById("elevenlabs-convai-script");
     if (!existing) {
@@ -14,13 +16,17 @@ export default function Support() {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6" ref={containerRef}>
       <h1 className="text-xl font-semibold mb-4">Support</h1>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         Chat with our support assistant or visit the knowledge base.
       </p>
-      {/* ElevenLabs Conversational AI Widget */}
-      <elevenlabs-convai agent-id="agent_7301k4h7g38afxy8t3q8q3a56qnr"></elevenlabs-convai>
+      {/* ElevenLabs Conversational AI Widget - custom element created by script */}
+      {(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        <elevenlabs-convai agent-id="agent_7301k4h7g38afxy8t3q8q3a56qnr"></elevenlabs-convai>
+      )}
     </div>
   );
 }
