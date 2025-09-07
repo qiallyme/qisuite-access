@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
@@ -9,14 +9,21 @@ export default function ClientUpdate() {
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      setUserId(data.session?.user?.id ?? null);
+    })();
+  }, []);
 
   async function handleSave() {
     setLoading(true);
     setStatus(null);
-    const { error } = await supabase.from("client_updates").insert({
-      company,
-      notes,
-    });
+    const { error } = await supabase
+      .from("client_updates")
+      .insert({ company, notes, user_id: userId });
     setLoading(false);
     if (error) setStatus(error.message);
     else setStatus("Saved");
