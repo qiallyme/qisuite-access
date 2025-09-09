@@ -15,4 +15,13 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        if (warning.code === "EVAL") return; // suppress eval warnings from dependencies
+        defaultHandler(warning);
+      },
+    },
+  },
 });

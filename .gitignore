@@ -9,6 +9,9 @@ lerna-debug.log*
 
 .env.local
 
+# Ignore external MCP KB project at repo root
+/../qially-kb-mcp/
+
 # Dependency directories
 node_modules/
 jspm_packages/
